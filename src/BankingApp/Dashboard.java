@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package BankingApp;
+
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -10,7 +11,6 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 public class Dashboard {
-
     private final Account account;
 
     public Dashboard(Stage primaryStage, Account account) {
@@ -19,40 +19,50 @@ public class Dashboard {
         primaryStage.setTitle("Banking Dashboard");
         VBox root = new VBox(20);
         root.setPadding(new Insets(30));
-        root.setStyle("-fx-background-color: white;");
+        root.setStyle("-fx-background-color: #001a33;");
 
         Label welcomeLabel = new Label("Welcome, " + account.getAccountHolderName());
-        welcomeLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: #005BAC;");
+        welcomeLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
 
         Button depositBtn = new Button("Deposit");
         Button withdrawBtn = new Button("Withdraw");
         Button transactionBtn = new Button("Transaction");
         Button balanceBtn = new Button("Check Balance");
+        Button logoutBtn = new Button("Logout");
 
-        for (Button btn : new Button[]{depositBtn, withdrawBtn, transactionBtn, balanceBtn}) {
+        // Apply button styling
+        String buttonStyle = "-fx-background-color: #0080ff; -fx-text-fill: white; -fx-font-weight: bold;";
+        for (Button btn : new Button[]{depositBtn, withdrawBtn, transactionBtn, balanceBtn, logoutBtn}) {
+            btn.setStyle(buttonStyle);
             btn.setPrefWidth(200);
-            btn.setStyle("-fx-background-color: #005BAC; -fx-text-fill: white; -fx-font-weight: bold;");
         }
 
+        // Set button actions
         depositBtn.setOnAction(e -> showDepositDialog());
         withdrawBtn.setOnAction(e -> showWithdrawDialog());
         transactionBtn.setOnAction(e -> showTransactionDialog());
         balanceBtn.setOnAction(e -> showBalanceDialog());
+        logoutBtn.setOnAction(e -> {
+            primaryStage.close();
+            new LoginPage().start(new Stage());
+        });
 
-        VBox buttonBox = new VBox(15, depositBtn, withdrawBtn, transactionBtn, balanceBtn);
-        buttonBox.setPadding(new Insets(10));
+        VBox buttonBox = new VBox(15, depositBtn, withdrawBtn, transactionBtn, balanceBtn, logoutBtn);
+        buttonBox.setPadding(new Insets(20));
 
         root.getChildren().addAll(welcomeLabel, buttonBox);
 
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 600, 500);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
+    // Dialog methods implementation
     private void showDepositDialog() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Deposit");
         dialog.setHeaderText("Enter deposit amount:");
+        dialog.getDialogPane().setStyle("-fx-background-color: #001a33;");
         dialog.showAndWait().ifPresent(amountStr -> {
             try {
                 double amount = Double.parseDouble(amountStr);
@@ -68,6 +78,7 @@ public class Dashboard {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Withdraw");
         dialog.setHeaderText("Enter amount to withdraw:");
+        dialog.getDialogPane().setStyle("-fx-background-color: #001a33;");
         dialog.showAndWait().ifPresent(amountStr -> {
             try {
                 double amount = Double.parseDouble(amountStr);
@@ -85,15 +96,29 @@ public class Dashboard {
     private void showTransactionDialog() {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Transaction");
+        dialog.getDialogPane().setStyle("-fx-background-color: #001a33;");
 
-        Label nameLabel = new Label("Recipient Name:");
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 10, 10, 10));
+
+        Label nameLabel = new Label("Recipient Account:");
+        nameLabel.setStyle("-fx-text-fill: white;");
         TextField nameField = new TextField();
+        nameField.setStyle("-fx-background-color: #003366; -fx-text-fill: white;");
 
         Label amountLabel = new Label("Amount:");
+        amountLabel.setStyle("-fx-text-fill: white;");
         TextField amountField = new TextField();
+        amountField.setStyle("-fx-background-color: #003366; -fx-text-fill: white;");
 
-        VBox content = new VBox(10, nameLabel, nameField, amountLabel, amountField);
-        dialog.getDialogPane().setContent(content);
+        grid.add(nameLabel, 0, 0);
+        grid.add(nameField, 1, 0);
+        grid.add(amountLabel, 0, 1);
+        grid.add(amountField, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         dialog.setResultConverter(btn -> {
@@ -125,7 +150,12 @@ public class Dashboard {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(msg);
+        
+        // Apply dark theme to alert
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.setStyle("-fx-background-color: #001a33;");
+        dialogPane.lookup(".content.label").setStyle("-fx-text-fill: white;");
+        
         alert.showAndWait();
     }
 }
-

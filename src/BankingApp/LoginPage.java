@@ -8,46 +8,63 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import BankingApp.Account;
-import BankingApp.Dashboard;
-
-import javafx.scene.layout.VBox;
 
 public class LoginPage {
     public void start(Stage stage) {
+        // Create UI components
         Label titleLabel = new Label("Login Page");
-
+        titleLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
+        
         TextField accountField = new TextField();
         accountField.setPromptText("Account Number");
-
-        TextField usernameField = new TextField();
-        usernameField.setPromptText("Username");
-
+        accountField.setStyle("-fx-background-color: #003366; -fx-text-fill: white;");
+        
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("Password");
+        passwordField.setStyle("-fx-background-color: #003366; -fx-text-fill: white;");
+        
         Button loginBtn = new Button("Login");
+        loginBtn.setStyle("-fx-background-color: #0080ff; -fx-text-fill: white; -fx-font-weight: bold;");
+        
         Label messageLabel = new Label();
-
+        messageLabel.setStyle("-fx-text-fill: #ff9999;");
+        
+        Button registerBtn = new Button("Don't have an account? Register");
+        registerBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #0080ff; -fx-border-color: transparent;");
+        
+        // Login handler
         loginBtn.setOnAction(e -> {
-            String accountNum = accountField.getText();
-            String username = usernameField.getText();
+            String accountNum = accountField.getText().trim();
+            String password = passwordField.getText();
+            
+            if (accountNum.isEmpty() || password.isEmpty()) {
+                messageLabel.setText("Please enter both fields.");
+                return;
+            }
 
-            User user = UserDataHandler.getUser(accountNum, username);
+            User user = UserDataHandler.getUser(accountNum, password);
             if (user != null) {
-                // Create account and open dashboard
                 Account account = new Account(user.getUsername());
                 stage.close();
                 new Dashboard(new Stage(), account);
             } else {
-                messageLabel.setText("Login failed. Please try again.");
+                messageLabel.setText("Invalid account number or password.");
             }
         });
+        
+        // Register handler
+        registerBtn.setOnAction(e -> {
+            stage.close();
+            new RegistrationPage().start(new Stage());
+        });
 
-        VBox layout = new VBox(10, titleLabel, accountField, usernameField, loginBtn, messageLabel);
-        layout.setStyle("-fx-padding: 20;");
-        Scene scene = new Scene(layout, 800, 600);
+        // Layout
+        VBox layout = new VBox(10, titleLabel, accountField, passwordField, 
+                              loginBtn, messageLabel, registerBtn);
+        layout.setStyle("-fx-padding: 20; -fx-background-color: #001a33;");
+        Scene scene = new Scene(layout, 400, 400);
         stage.setScene(scene);
         stage.setTitle("Login");
         stage.show();
     }
-
-
 }

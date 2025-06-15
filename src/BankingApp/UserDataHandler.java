@@ -6,7 +6,6 @@ package BankingApp;
 
 
 import java.io.*;
-import java.util.*;
 
 public class UserDataHandler {
     private static final String FILE_PATH = "users.txt";
@@ -20,12 +19,14 @@ public class UserDataHandler {
         }
     }
 
-    public static User getUser(String accountNumber, String username) {
+    public static User getUser(String accountNumber, String password) {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 User user = User.fromDataString(line);
-                if (user.getAccountNumber().equals(accountNumber) && user.getUsername().equals(username)) {
+                if (user != null && 
+                    user.getAccountNumber().equals(accountNumber) && 
+                    user.getPassword().equals(password)) {
                     return user;
                 }
             }
@@ -35,4 +36,3 @@ public class UserDataHandler {
         return null;
     }
 }
-

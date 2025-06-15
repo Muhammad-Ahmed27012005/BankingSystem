@@ -4,20 +4,22 @@
  */
 package BankingApp;
 
-
 public class User {
     private String firstName;
     private String lastName;
     private String mobile;
     private String country;
     private String accountNumber;
+    private String password;
 
-    public User(String firstName, String lastName, String mobile, String country, String accountNumber) {
+    public User(String firstName, String lastName, String mobile, String country, 
+                String accountNumber, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.mobile = mobile;
         this.country = country;
         this.accountNumber = accountNumber;
+        this.password = password;
     }
 
     public String getUsername() {
@@ -28,13 +30,18 @@ public class User {
         return accountNumber;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public String toDataString() {
-        return firstName + "," + lastName + "," + mobile + "," + country + "," + accountNumber;
+        return firstName + "," + lastName + "," + mobile + "," + country + "," + 
+               accountNumber + "," + password;
     }
 
     public static User fromDataString(String data) {
         String[] parts = data.split(",");
-        return new User(parts[0], parts[1], parts[2], parts[3], parts[4]);
+        if(parts.length != 6) return null;
+        return new User(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]);
     }
 }
-
