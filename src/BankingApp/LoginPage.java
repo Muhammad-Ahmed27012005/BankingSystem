@@ -61,8 +61,8 @@ public class LoginPage {
         // Layout
         VBox layout = new VBox(10, titleLabel, accountField, passwordField, 
                               loginBtn, messageLabel, registerBtn);
-        layout.setStyle("-fx-padding: 20; -fx-background-color: #001a33;");
-        Scene scene = new Scene(layout, 400, 400);
+        layout.setStyle("-fx-padding: 50; -fx-background-color: #001a33;");
+        Scene scene = new Scene(layout, 1280, 720);
         stage.setScene(scene);
         stage.setTitle("Login");
         stage.show();

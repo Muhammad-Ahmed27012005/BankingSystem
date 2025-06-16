@@ -15,7 +15,7 @@ public class RegistrationPage {
     public void start(Stage stage) {
         // Create UI components
         Label titleLabel = new Label("Registration Form");
-        titleLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
+        titleLabel.setStyle("-fx-font-size: 40px; -fx-text-fill: white;");
         
         TextField firstNameField = new TextField();
         firstNameField.setPromptText("First Name");
@@ -69,7 +69,7 @@ public class RegistrationPage {
             }
 
             // Generate account number
-            String accountNumber = "HBL" + UUID.randomUUID().toString().substring(0, 8);
+            String accountNumber = "DAT" + UUID.randomUUID().toString().substring(0, 8);
             
             // Create and save user
             User user = new User(fName, lName, mobile, country, accountNumber, password);
@@ -78,8 +78,8 @@ public class RegistrationPage {
             // Show success message
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Success");
-            alert.setHeaderText("Registration Complete");
-            alert.setContentText("Your account number is: " + accountNumber + 
+            alert.setHeaderText("Registration Completed");
+            alert.setContentText("Your Account number is: " + accountNumber + 
                                "\nUsername: " + user.getUsername());
             alert.showAndWait();
 
@@ -91,8 +91,8 @@ public class RegistrationPage {
         VBox layout = new VBox(10, titleLabel, firstNameField, lastNameField, 
                               mobileField, countryField, passwordField, 
                               confirmPasswordField, registerBtn, messageLabel);
-        layout.setStyle("-fx-padding: 20; -fx-background-color: #001a33;");
-        Scene scene = new Scene(layout, 400, 500);
+        layout.setStyle("-fx-padding: 40; -fx-background-color: #001a33;");
+        Scene scene = new Scene(layout, 1280,720);
         stage.setScene(scene);
         stage.setTitle("Register");
         stage.show();

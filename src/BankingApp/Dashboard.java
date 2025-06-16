@@ -52,7 +52,7 @@ public class Dashboard {
 
         root.getChildren().addAll(welcomeLabel, buttonBox);
 
-        Scene scene = new Scene(root, 600, 500);
+        Scene scene = new Scene(root, 1280, 700);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
