@@ -4,6 +4,9 @@
  */
 package BankingApp;
 
+import java.util.ArrayList;
+import java.util.List;
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -26,28 +29,28 @@ public class Dashboard {
 
         Button depositBtn = new Button("Deposit");
         Button withdrawBtn = new Button("Withdraw");
-        Button transactionBtn = new Button("Transaction");
+        Button transactionBtn = new Button("Transfer");
         Button balanceBtn = new Button("Check Balance");
+        Button historyBtn = new Button("Transaction History");
         Button logoutBtn = new Button("Logout");
 
-        // Apply button styling
         String buttonStyle = "-fx-background-color: #0080ff; -fx-text-fill: white; -fx-font-weight: bold;";
-        for (Button btn : new Button[]{depositBtn, withdrawBtn, transactionBtn, balanceBtn, logoutBtn}) {
+        for (Button btn : new Button[]{depositBtn, withdrawBtn, transactionBtn, balanceBtn, historyBtn, logoutBtn}) {
             btn.setStyle(buttonStyle);
             btn.setPrefWidth(200);
         }
 
-        // Set button actions
         depositBtn.setOnAction(e -> showDepositDialog());
         withdrawBtn.setOnAction(e -> showWithdrawDialog());
         transactionBtn.setOnAction(e -> showTransactionDialog());
         balanceBtn.setOnAction(e -> showBalanceDialog());
+        historyBtn.setOnAction(e -> showTransactionHistory());
         logoutBtn.setOnAction(e -> {
             primaryStage.close();
             new LoginPage().start(new Stage());
         });
 
-        VBox buttonBox = new VBox(15, depositBtn, withdrawBtn, transactionBtn, balanceBtn, logoutBtn);
+        VBox buttonBox = new VBox(15, depositBtn, withdrawBtn, transactionBtn, balanceBtn, historyBtn, logoutBtn);
         buttonBox.setPadding(new Insets(20));
 
         root.getChildren().addAll(welcomeLabel, buttonBox);
@@ -57,7 +60,6 @@ public class Dashboard {
         primaryStage.show();
     }
 
-    // Dialog methods implementation
     private void showDepositDialog() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Deposit");
@@ -95,7 +97,7 @@ public class Dashboard {
 
     private void showTransactionDialog() {
         Dialog<Void> dialog = new Dialog<>();
-        dialog.setTitle("Transaction");
+        dialog.setTitle("Transfer Money");
         dialog.getDialogPane().setStyle("-fx-background-color: #001a33;");
 
         GridPane grid = new GridPane();
@@ -103,18 +105,26 @@ public class Dashboard {
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 10, 10, 10));
 
-        Label nameLabel = new Label("Recipient Account:");
-        nameLabel.setStyle("-fx-text-fill: white;");
-        TextField nameField = new TextField();
-        nameField.setStyle("-fx-background-color: #003366; -fx-text-fill: white;");
+        Label recipientLabel = new Label("Recipient Account:");
+        recipientLabel.setStyle("-fx-text-fill: white;");
+        
+        ComboBox<String> accountCombo = new ComboBox<>();
+        accountCombo.setStyle("-fx-background-color: #003366; -fx-text-fill: white;");
+        List<String> accountNumbers = new ArrayList<>();
+        for (User user : UserDataHandler.getAllUsers()) {
+            if (!user.getAccountNumber().equals(account.getAccountNumber())) {
+                accountNumbers.add(user.getAccountNumber() + " - " + user.getUsername());
+            }
+        }
+        accountCombo.setItems(FXCollections.observableArrayList(accountNumbers));
 
         Label amountLabel = new Label("Amount:");
         amountLabel.setStyle("-fx-text-fill: white;");
         TextField amountField = new TextField();
         amountField.setStyle("-fx-background-color: #003366; -fx-text-fill: white;");
 
-        grid.add(nameLabel, 0, 0);
-        grid.add(nameField, 1, 0);
+        grid.add(recipientLabel, 0, 0);
+        grid.add(accountCombo, 1, 0);
         grid.add(amountLabel, 0, 1);
         grid.add(amountField, 1, 1);
 
@@ -124,20 +134,47 @@ public class Dashboard {
         dialog.setResultConverter(btn -> {
             if (btn == ButtonType.OK) {
                 try {
-                    String recipient = nameField.getText().trim();
+                    String selected = accountCombo.getSelectionModel().getSelectedItem();
+                    if (selected == null || selected.isEmpty()) {
+                        showAlert("Error", "Please select a recipient account.");
+                        return null;
+                    }
+                    
+                    String recipientAccountNumber = selected.split(" ")[0];
                     double amount = Double.parseDouble(amountField.getText());
-                    if (account.transact(recipient, amount)) {
-                        showAlert("Transaction Successful", "Sent $" + amount + " to " + recipient);
+                    
+                    if (account.transact(recipientAccountNumber, amount)) {
+                        showAlert("Success", String.format(
+                            "Transferred $%.2f to account %s", 
+                            amount, recipientAccountNumber));
                     } else {
-                        showAlert("Transaction Failed", "Insufficient balance.");
+                        showAlert("Failed", "Transaction failed. Check balance or account number.");
                     }
                 } catch (NumberFormatException e) {
-                    showAlert("Invalid Input", "Enter a valid amount.");
+                    showAlert("Invalid Input", "Please enter a valid amount.");
                 }
             }
             return null;
         });
 
+        dialog.showAndWait();
+    }
+
+    private void showTransactionHistory() {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Transaction History");
+        dialog.getDialogPane().setStyle("-fx-background-color: #001a33;");
+
+        ListView<String> listView = new ListView<>();
+        listView.setStyle("-fx-background-color: #003366; -fx-text-fill: white;");
+        listView.getItems().addAll(account.getUser().getTransactionHistory());
+
+        if (listView.getItems().isEmpty()) {
+            listView.getItems().add("No transactions yet");
+        }
+
+        dialog.getDialogPane().setContent(listView);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
         dialog.showAndWait();
     }
 
@@ -151,7 +188,6 @@ public class Dashboard {
         alert.setHeaderText(null);
         alert.setContentText(msg);
         
-        // Apply dark theme to alert
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.setStyle("-fx-background-color: #001a33;");
         dialogPane.lookup(".content.label").setStyle("-fx-text-fill: white;");

@@ -11,7 +11,6 @@ import javafx.stage.Stage;
 
 public class LoginPage {
     public void start(Stage stage) {
-        // Create UI components
         Label titleLabel = new Label("Login Page");
         titleLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
         
@@ -32,7 +31,6 @@ public class LoginPage {
         Button registerBtn = new Button("Don't have an account? Register");
         registerBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #0080ff; -fx-border-color: transparent;");
         
-        // Login handler
         loginBtn.setOnAction(e -> {
             String accountNum = accountField.getText().trim();
             String password = passwordField.getText();
@@ -44,7 +42,7 @@ public class LoginPage {
 
             User user = UserDataHandler.getUser(accountNum, password);
             if (user != null) {
-                Account account = new Account(user.getUsername());
+                Account account = new Account(user);
                 stage.close();
                 new Dashboard(new Stage(), account);
             } else {
@@ -52,13 +50,11 @@ public class LoginPage {
             }
         });
         
-        // Register handler
         registerBtn.setOnAction(e -> {
             stage.close();
             new RegistrationPage().start(new Stage());
         });
 
-        // Layout
         VBox layout = new VBox(10, titleLabel, accountField, passwordField, 
                               loginBtn, messageLabel, registerBtn);
         layout.setStyle("-fx-padding: 50; -fx-background-color: #001a33;");

@@ -4,6 +4,7 @@
  */
 package BankingApp;
 
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -18,12 +19,9 @@ public class Main extends Application {
         primaryStage.setWidth(1280);
         primaryStage.setHeight(670);
         
-        
-
         Button registerBtn = new Button("Register");
         Button loginBtn = new Button("Login");
         
-        // Apply theme
         String buttonStyle = "-fx-background-color: #0080ff; -fx-text-fill: white; -fx-font-weight: bold; -fx-pref-width: 400px;-fx-pref-height: 60px;";
         registerBtn.setStyle(buttonStyle);
         loginBtn.setStyle(buttonStyle);

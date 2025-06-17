@@ -4,7 +4,6 @@
  */
 package BankingApp;
 
-
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -13,7 +12,6 @@ import java.util.UUID;
 
 public class RegistrationPage {
     public void start(Stage stage) {
-        // Create UI components
         Label titleLabel = new Label("Registration Form");
         titleLabel.setStyle("-fx-font-size: 40px; -fx-text-fill: white;");
         
@@ -47,7 +45,6 @@ public class RegistrationPage {
         Label messageLabel = new Label();
         messageLabel.setStyle("-fx-text-fill: #ff9999;");
 
-        // Registration handler
         registerBtn.setOnAction(e -> {
             String fName = firstNameField.getText().trim();
             String lName = lastNameField.getText().trim();
@@ -56,7 +53,6 @@ public class RegistrationPage {
             String password = passwordField.getText();
             String confirmPassword = confirmPasswordField.getText();
 
-            // Validation
             if (fName.isEmpty() || lName.isEmpty() || mobile.isEmpty() || 
                 country.isEmpty() || password.isEmpty()) {
                 messageLabel.setText("Please fill in all fields.");
@@ -68,14 +64,11 @@ public class RegistrationPage {
                 return;
             }
 
-            // Generate account number
             String accountNumber = "DAT" + UUID.randomUUID().toString().substring(0, 8);
             
-            // Create and save user
             User user = new User(fName, lName, mobile, country, accountNumber, password);
             UserDataHandler.saveUser(user);
 
-            // Show success message
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Success");
             alert.setHeaderText("Registration Completed");
@@ -87,7 +80,6 @@ public class RegistrationPage {
             new LoginPage().start(new Stage());
         });
 
-        // Layout
         VBox layout = new VBox(10, titleLabel, firstNameField, lastNameField, 
                               mobileField, countryField, passwordField, 
                               confirmPasswordField, registerBtn, messageLabel);
